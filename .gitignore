@@ -1,0 +1,12 @@
+chrome-extension/core
+chrome-extension/lib
+chrome-extension/workflows
+.DS_Store
+chrome-extension/.DS_Store
+chrome-extension/testWorkflow.js
+test/v2/.module-cache
+test/v2/jsx/build/.module-cache
+node_modules/*
+test/v2/jsx/.module-cache/*
+dest
+packages/npm/node_modules/*

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../dest/output2.min.js"></script>
+    <script id="script" type="text/template">
+      flytrap 'x' 
+      
+      click '#a'
+      
+      click '#b'
+      
+      click '#c'
+    </script>
+  </head>
+  <body>
+    
+    <button id="a" onclick="console.log('clicked #a!')">A</button>
+    <button id="b" onclick="console.log('clicked #c!')">B</button>
+    <button id="c" onclick="console.log('clicked #c!')">C</button>
+    <script>
+       console.log(document.getElementById("script").innerHTML)
+  new Flytrap({
+    name: 'test',
+    code: document.getElementById("script").innerHTML
+  }).go();
+    </script>
+  </body>
+</html>

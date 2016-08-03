@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Flytrap Test</title>
+		<style>
+			.flytrap-active-command {
+			    background-color: linen;
+			}
+		</style>
+	</head>
+	<body>
+		<input type="button" id="clickme" onclick="this.value='success!';addButton('b')" value="not yet clicked" />
+		<input type="button" id="x" value="x" onclick="this.value='x clicked'" />
+		<input type="button" id="y" value="y" onclick="this.value='y clicked'" />
+		<input type="button" id="z" value="z" onclick="this.value='z clicked'" />
+		<input type="text" id="q" />
+		<input type="text" id="qq" />
+		<input type="text" id="qqq" />
+		<input type="checkbox" id="j" />
+		<input type="checkbox" id="k" />
+		<input type="checkbox" id="l" />
+		<input type="checkbox" id="m" />
+		<div id="t"></div>
+		<input type="button" class="my-button yes" value="XXXXXXX" />
+		<!-- js testing -->
+		<script type="text/javascript">
+			function addButton(buttonId) {
+				var elem = document.createElement("input");
+   				elem.id = buttonId;
+   				elem.type = 'button';
+   				elem.value = 'button ' + buttonId;
+   				elem.addEventListener('click', function(e) {
+   					e.srcElement.value = 'success!';
+   					addButton((((Math.random() * 10)) | 0) % 2 == 0 ? 'c' : 'd');
+   				});
+				document.body.appendChild(elem);
+			}
+		</script>
+		<script src="../lib/require.js"></script>
+<script id="asserttest" type="text/template">
+flytrap 'assert test'
+assert exists '#j'
+</script>
+
+<script id="formstest" type="text/template">
+flytrap 'x'
+	@forms = [{
+		name: 'Joel',
+		age: '29',
+		languages: ['csharp', 'javascript', 'flytrap']
+	},{
+		name: 'Maddy',
+		age: '29',
+		languages: ['c']
+	}]
+
+	each @form in @forms 
+	begin
+		(set '#name' to @form.name
+		set '#age' to @form.age)
+
+		each @language in @form.languages 
+		begin
+			(check '.checkbox-' + @language
+			after 0.1 seconds)
+		end
+
+		click '#submit'
+	end
+</script>
+
+		<script id="testtemplatexxxx" type="text/template">
+flytrap 'test flytrap'
+antidependency '#anti'
+
+@x = [
+	{
+		a : '1',
+		b : '2',
+		c : '3'
+	},
+	{
+		a : '4',
+		b : '5',
+		c : '6'
+	}
+]
+
+each @y in @x
+begin
+	(log @y.a + ' ' + @y.b + ' ' + @y.c
+	after 0.1 seconds)
+end
+
+@json = {
+	x : ['1', '2', '3'],
+	y : '4',
+	a : {
+		b : '5'
+	}
+}
+
+each @num in @json.x
+begin
+	log @num
+end
+
+log @json.y
+
+log @json.a.b
+
+</script>
+
+
+		<script id="testtemplatexxx" type="text/template">
+flytrap 'test flytrap'
+antidependency '#anti'
+
+@a = ['a', 'b', 'c']
+@j = ['j', 'k', 'l']
+@x = ['x', 'y', 'z']
+@json = 
+[{ 
+	x : 'y',
+	moreJson : {
+		even : 'more?',
+		yes  : 'no'
+	}
+},{ 
+	a : 'b',
+	EVENmoreJson : {
+		evenEVEN : 'moreMORE?',
+		yes      : 'YESSS!'
+	}
+},{
+	 array : [
+		'a',
+		'b',
+		'c',
+		{
+			d : 'e'
+		}
+	]
+}]
+@json2 = {
+	x : ['1', '2', '3']
+}
+
+each @num in @json2.x
+begin
+	log @num
+end
+
+checkpoint 'x'
+
+each @item1 in @a
+begin
+	each @item2 in @j
+	begin
+		each @item3 in @x
+		begin
+			(log @item1 + ' ' + @item2 + ' ' + @item3
+			after 0.1 seconds)
+		end
+	end
+end
+
+assert exists '#x'
+		</script>
+
+<script id="testtemplatederp" type="text/template">
+flytrap 'test flytrap'
+antidependency '#anti'
+
+if exists '#x'
+begin
+	assert exists '#xxs'
+end
+</script>
+
+		<script id="testtemplatexx" type="text/template">
+flytrap 'test flytrap'
+antidependency '#anti'
+
+@x = 'x '
+@y = 'y '
+@z = 'z'
+log @x + @y + @z
+
+@itemsX = ['#x', '#y', '#z']
+@itemsY = ['1', '2', '3']
+each @item1 in @itemsX
+begin
+	each @item2 in @itemsY
+	begin
+		each @item3 in [@item1, @item2, 'HEY EVERYONE!']
+		begin
+			(log @item1 + ' ' + @item2 + ' ' + @item3
+			click @item1
+			after 0.1 seconds)
+		end
+	end
+end
+
+		</script>
+
+
+
+
+		<script id="testtemplate" type="text/template">
+flytrap 'test flytrap'
+antidependency '#anti'
+
+(click '#does not exist'
+skip after 1 attempt)
+
+each @item1 in ['#x', '#y', '#z']
+begin
+	(click @item1
+	after 0.1 seconds)
+
+	each @item2 in ['#j', '#k', '#l']
+	begin
+		@j = 'jjjjjjj'
+
+		(click @item2
+		log @j
+		after 0.1 seconds)
+	end
+
+	if exists '#x'
+	begin
+		(log @item1
+		after 0.1 seconds)
+
+		@qqq = '#qqq'
+		@qqqq = @qqq
+
+		each @item3 in ['#q', '#qq', @qqqq]
+		begin
+			(focus @item3
+			after 0.1 seconds)
+
+			(log @item3
+			set @item3 to @item1
+			after 0.1 seconds)
+		end
+	end
+end
+
+@asdf = 'fdsa'
+checkpoint 'asdf' + @asdf
+
+(click '#clickme'!
+check '#j'
+hash '#helloimjohnnyhash'
+after 0.1 seconds)
+
+if exists '#does not exist'
+dependency '#x'
+begin
+	log 'hopefully I''m not being displayed'
+end
+else
+begin
+	@p = 'and so will i!'
+
+	(log 'i will be seen!', @p
+	after 0.1 seconds)
+end
+
+@y = 'i''m the content stored in variable @y!'
+
+(log @y
+after 2 seconds)
+
+		</script>
+
+
+
+
+		<script id="testtemplate2" type="text/template">
+flytrap 'Test one'
+	antidependency '#anti'
+
+perform 'click the button'
+	click '#clickme'
+
+perform 'click b'
+	click '#b'
+
+each @item in ['#x', '#y', '#z']
+begin
+	perform 'click x, y, z'
+		click @item
+end
+
+each @z in ['#q', '#qq', '#qqq']
+begin
+	perform 'focus z''s'
+		set @z to @z
+
+	each @j in ['#j', '#k', '#l']
+	begin
+		perform 'click j, k, l'
+			check @j
+	end
+end
+
+if exists '#c'
+begin
+	perform 'pick c!'
+		click '#c'
+end
+else
+begin
+	perform 'now pick d!'
+		click '#d'
+
+	if exists '#d'
+	begin
+		perform 'say hey!'
+			log 'hey'
+	end
+end
+
+
+		</script>
+		<script id="commands" type="text/template">
+flytrap 'Kansas PRE'
+	antidependency 'div.blockUI'
+
+perform 'Select "New Brand" from registration types'
+	click '#PreStep1 div div div.select div:contains("New Brand")'
+
+perform 'Check "only show complete labels" checkbox'
+	check '#onlyShowCompleteLabels'
+
+perform 'Click continue'
+	hash '#searchLabels/0/true'
+
+perform 'Select a brand'
+	click '#LabelSearchResults a.addCandidateLabel:visible:gt(0):first img'
+	after 3 seconds
+
+perform 'Press Continue (to Review Labels)'
+	hash '#reviewLabels'
+	after 2 seconds
+
+perform 'Press Continue (to Select States)'
+	click '#labelsThatCanBeRegistered:visible'
+	hash '#selectStates'
+
+perform 'Check the Kansas box and Press Continue (to Select Distributors)'
+	click 'input[data-regionId=17]'
+
+perform 'Press Continue (Select Distributors)'
+	hash '#selectDistributors'
+
+if exists '.candidate-region-distributor-count' 
+	dependency '.candidate-region-header'
+begin
+	perform 'Unselect all Distributors'
+		click 'a.checkAll'!
+		skip after 5 attempts
+
+	perform 'Select first Distributor'
+		click 'div.candidate-distributor:first'
+		skip after 1 attempt
+end 
+else 
+begin
+	perform 'Click Add a new distributor'
+		click 'div.add-new-distributor'
+
+	perform 'Type Beer House Distributors license number'
+		autocomplete '#distributorName', 'Beer House Distributors', '30168'
+
+	perform 'Fill out info'
+		click '#territories div div.regionToRegister input:lt(3)'
+		click '#acknowledgeSupplyAgreements'
+		set '#distributorEffectiveDate' to '2014-10-05'
+		set '#distributorShipToAddressInfoEmail' to 'joel+bhd@six88.com'
+
+	perform 'Click submit'
+		click '#addDistributor div button.button'
+		after 1.5 seconds
+end
+
+perform 'Press Continue (to Review Distributors)'
+	hash '#reviewDistributors'
+	after 2 seconds
+
+perform 'Press Continue (to Complete)'
+	hash '#completeRegistration'
+	after 2 seconds
+
+perform 'Generate packet'
+	click '#generate-packet'!
+</script>
+<script type="text/template">
+@x = ['@x''s', 'type:', 'array', 'of', 'type', 'string']
+@y = '@y''s type: string'
+
+if exists '.candidate-region-distributor-count'
+begin
+	perform 'Unselect all Distributors'
+		click 'a.checkAll'
+
+	perform 'Select first Distributor'
+		click 'div.candidate-distributor:first'
+
+end 
+else 
+begin
+	perform 'Fill out info'
+		click '#territories div div.regionToRegister input:lt(3)'
+
+	perform 'Click submit'
+		click '#addDistributor div button.button'
+		after 1.5 seconds
+end
+
+each @item in ['a', 'b', 'c']
+begin
+	perform 'click a, b, c'
+		click 'a'
+end
+		</script>
+		<script id="ughwtf" type="text/template">
+
+			flytrap 'x'
+			@x = 'x'
+			@y = 'y'
+			@z = 'z'
+
+			log @x, @y, @z
+
+			@x = 'x'
+			@y = 'y'
+			@z = 'z'
+
+			if exists '#x' begin
+				@f = 'HEY EVERYONE I''M f'
+				log @f
+			end else begin
+				@f = 'HEY EVERYONE I''M g'
+				log @f
+			end
+			log @f
+			checkpoint 'x'
+
+			@xyz = [@x, @y, @z]
+			each @letter in @xyz
+			begin
+				click '#' + @letter
+				assert exists '#' + @letter
+			end
+		</script>
+
+		<script id="ughwtf2" type="text/template">
+
+			flytrap 'x'
+			@x = 'x'
+			@y = 'y'
+			@z = 'z'
+
+			@xyz = [@x, @y, @z]
+
+			each @letter in @xyz
+			begin
+				click '#' + @letter
+			end
+
+		</script>
+
+		<script id="_flytrap_module_login-module" type="text/taskyscript">
+
+			flytrap 'login-module'
+
+			@username = 'joelx'
+			@password = 'p@ssw0rdx'
+
+			(set '#q' to @username
+			set '#qq' to @password)
+
+			click '#z'
+
+		</script>
+
+		<script id="moduletest" type="text/taskyscript">
+
+			flytrap 'login'
+			
+			execute 'login-module'
+			with 'joeld' as @username
+			with 'p@ssw0rdd' as @password
+
+			//click '#y'
+			click '#x'
+			/******/ click '#y' // this clicks #y
+			///* click '#fart' // **/
+			//******/
+		//asdf//
+		/***///
+		/***/
+
+		/*
+		
+		// */
+		click '#y'
+/*
+asdf
+//
+asdf
+*/
+		click '#z'
+
+		</script>
+
+		<script id="commenttest" type="text/taskyscript">
+			flytrap 'login'
+			click '#x'
+			click '#z'
+
+@red = 'red'
+@colors = [@red, 'green', 'blue']
+@car = {
+	name: 'My favorite car',
+	colors: @colors
+}
+
+each @color in @car.colors
+begin
+	log @car.name + ' comes in ' + @color
+end
+
+			//bbbbb
+			/*bbbb
+			bbbb
+			bbb
+
+			bbb
+			//bbb*/
+			//bbb
+		</script>
+
+		<script id="pickertest" type="text/flytrap">
+		flytrap 'x'
+		(click '#x[type=button]'
+		dependency '#derppp'
+		skip after 5 attempts)
+		</script>
+
+
+		<script id="repeattest" type="text/flytrap">
+		flytrap 'x'
+
+
+
+log 'http://google.com' 
+// bbbbb
+// 'b'bbbbb' /*
+log ' /* asdfiaosdjfasdf */'/*
+
+sadfsaddd
+// asdfsadf
+*/
+
+// multi line 
+log '//////\\/\/\\/\/	 /* comment SHOULD B E SEEN! */
+hello!//
+asdfsd///* */fisdifisdf boom!!!\\'''
+
+//goto 'file:///Users/jroot/Dev/flytrap/test/test.html'
+		</script>
+
+		<script id="car" type="text/flytrap">
+		flytrap 'x'
+
+@cars = [
+	{ 
+		name: 'Little Red Corvette',
+		year: '1974',
+		make: 'Chevrolet',
+		model: 'Corvette',
+		driver: {
+			first: 'Jimmy',
+			last: 'Jimsen',
+			children: ['Jimmy Jr.', 'Jill']
+		}
+	},
+	{
+		name: 'The Green Machine',
+		year: '1995',
+		make: 'Ford',
+		model: 'Explorer',
+		driver: {
+			first: 'Bobby',
+			last: 'Bobson'/*,
+			children: ['Bobby Jr', 'Bella']*/
+		}
+	},
+	{ 
+		name: 'xxx',
+		year: 'xxxx',
+		make: 'xxxxx',
+		model: 'xxxxxxx',
+		driver: {
+			first: 'x',
+			last: 'xx',
+			children: []
+		}
+	}
+]
+
+each @car in @cars
+begin
+	log @car.name, @car.year, @car.make, @car.model
+	
+	each @childName in @car.driver.children
+	begin
+		log @childName
+	end
+
+	log @car.driver.first, @car.driver.last
+
+end
+
+
+//goto 'file:///Users/jroot/Dev/flytrap/test/test.html'
+		</script>
+
+
+<script id="nonono" type="text/flytrap">
+		flytrap 'x'
+
+		click '#x'
+
+		(click '#notexists'
+		skip after 2 attempts)
+
+		assert exists '#x'
+		checkpoint 'asdf'
+
+
+
+		</script>
+
+		<script type="text/javascript">
+			require.config({
+				baseUrl: "../",
+				paths: {
+				    "lib": "lib/",
+				    "core": "core/",
+				    "jquery" :"lib/jquery"
+				},
+				waitSeconds: 15
+			});
+			
+		  	require([
+			  		"jquery", 
+			  		"core/flytrap"
+		  		],
+			    function($, Flytrap) {
+
+			    	// blink the global antidependency div
+			    	var antiTimes = 4;
+			    	var antiExists = false;
+			    	var createAntidependencyDiv = function() {
+			    		if (!antiTimes)  {
+			    			$('#t').html('');
+			    			return;
+			    		}
+
+			    		if (antiExists) {
+			    			$('#t').html('');
+			    		}
+			    		else {
+			    			$('#t').html('<div id="anti" style="color:#fff;background-color:#f00">antidependency!  commands shouldn\'t be running right now!</div>')
+			    			antiTimes--;
+			    		}
+			    		antiExists = !antiExists;
+			    		setTimeout(createAntidependencyDiv, 500);
+			    	}
+			    	setTimeout(createAntidependencyDiv, 500);
+
+			    	//debugger;
+					new Flytrap({
+						
+						//name: 'test run',
+						
+						code: $('#nonono').html(),
+
+						checkpointWasReached: function(payload, a) {
+							console.log("in checkpointWasReached");
+						},
+
+						workflowDidComplete: function(payload) {
+							console.log("in workflowDidComplete");
+						},
+
+						commandMayExecute: function(payload) {
+							console.log("in commandMayExecute");
+						},
+
+						commandDidComplete: function(payload) {
+							console.log('in commandDidComplete: ' + payload.status);
+						}
+
+					}).go();
+					
+
+
+		    	}
+		    );
+
+
+		    document.body.addEventListener("change", function(e) {
+		    	if (e.target.id) console.log("#" + e.target.id)
+		    	else console.log("."+Array.prototype.join.call(e.target.classList, "."));
+		    	console.log(["checkbox", "radio"].indexOf(e.target.type) !== -1 ? e.target.checked : e.target.value);
+		    });
+
+		    document.body.addEventListener("click", function(e) {
+		    	//debugger;
+		    	if (e.target.id) console.log("#" + e.target.id)
+		    	else console.log("."+Array.prototype.join.call(e.target.classList, "."));
+		    });
+
+		    document.body.addEventListener("focus", function(e) {
+
+		    });
+		</script>
+	</body>
+</html>

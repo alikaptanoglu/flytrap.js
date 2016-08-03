@@ -1,0 +1,10 @@
+{
+  "name": "flytrap",
+  "version": "1.0.1",
+  "description": "Flytrap is a web UI automation engine in a javascript library.  It drives automation of your webapp via Flytrap the language (http://docs.flytrap.io).",
+  "author": "TestBeacon",
+  "license": "ISC",
+  "dependencies": {
+    "sizzle": "^2.3.0"
+  }
+}

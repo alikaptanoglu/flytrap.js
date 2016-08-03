@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+	    <script src="lib/react.js"></script>
+	    <!--<script src="lib/JSXTransformer.js"></script>-->
+	    <script src="../lib/require.js"></script>
+	    <script src="../dest/output.min.js"></script>
+	    <style>
+	    	#testNodes .test-node
+	    	{
+	    		background-color:#ccc;
+	    		height:100%;
+	    		width:100%;
+	    		font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	    		color:#333;
+	    		font-size:1em;
+	    		margin:4px;
+	    		#padding:4px;
+	    	}
+
+	    	#testNodes > div
+	    	{
+	    		width:325px;
+	    		height:22px;
+	    	}
+
+		    #testNodes .test-node.passed 
+		    {
+		    	background-color:#00ff00;
+		    }
+
+		    #testNodes .test-node.failure 
+		    {
+		    	background-color:#ff0000;
+		    }
+
+		    #testNodes .test-node.incomplete 
+		    {
+		    	background-color:#ffff00;
+		    }
+	    </style>
+  	</head>
+  	<body>
+	  	<div id="testNodes">
+    	</div>
+    	<script>
+			require.config({
+				baseUrl: "../",
+				paths: {
+				    "lib": "lib/",
+				    "core": "core/",
+				    "jquery": "lib/jquery",
+				    "sizzle": "lib/sizzle",
+				    "test/fixturecontainer": "test/v2/fixturecontainer",
+				    "test": "test/v2/jsx/build"
+				},
+				waitSeconds: 15
+			});
+			
+		  	require([
+			  		"jquery", 
+			  		"test/fixturecontainer"
+		  		],
+			    function($, TestFixtureContainer) {
+			    	for(var fixture in TestFixtureContainer) {
+			    		for(var i = 0;i < TestFixtureContainer[fixture].length;++i) {
+			    			var div = document.createElement('div');
+			    			div.className = 'test-node-container';
+			    			document.getElementById('testNodes').appendChild(div);
+			    			//var rendered = React.renderToString(TestFixtureContainer[fixture][i]);
+			    			//var renderedStatic = React.renderToStaticMarkup(TestFixtureContainer[fixture][i]);
+			    			React.render(TestFixtureContainer[fixture][i], div);
+			    		}
+			    	}
+		    	}
+		    );
+		</script>
+  	</body>
+</html>

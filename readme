@@ -1,0 +1,19 @@
+# watch for testing jsx changes
+jsx --watch -x jsx test/v2/jsx/ test/v2/jsx/
+
+# build the chrome extension
+./build-chrome-extension-osx.sh (or  ./build-chrome-extension-windows.bat)
+
+# use webpack to build a minified output2.min.js
+./build-output-file.sh
+
+# we must change the production sizzle.js to define a require module called 'lib/sizzle'
+# by default, it defines an anonymous module
+# the following is the diff:
+- define(function(){return fb})
++ define('lib/sizzle',function(){return fb})
+
+
+# Flytrap
+### Sharable, composable automations that run in the browser.  Useful for automating web unit- and integration-testing, tedious workflows, data-entry (via blobs of JSON), feature tours, reproducing bugs, etc.
+

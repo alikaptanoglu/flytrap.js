@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+	    <!--<script src="../lib/require.js"></script>
+	    <script src="../lib/output.min.js"></script>-->
+
+	   
+	    <script src="https://app.testbeacon.com/assets/lib/flytrap.min.js"></script>
+	    <script src="../lib/sizzle.js"></script>
+  	</head>
+  	<body>
+  		<!-- Markup -->
+  		<input type="button" id="x" value="not clicked" onclick="this.value = 'clicked'" />
+  		<button id="a" onclick="console.log('clicked #a!')">A</button>
+    	<button id="b" onclick="console.log('clicked #c!')">B</button>
+    	<button id="c" onclick="console.log('clicked #c!')">C</button>
+
+  		<!-- Flytrap script -->
+  		<script id="test" type="text/autodrone">
+			flytrap 'x' 
+
+			click '#a'
+
+			click '#b'
+
+			click '#c'
+  		</script>
+
+  		<!-- Initalize and start Flytrap -->
+    	<script type="text/javascript">
+	    	new Flytrap({
+				name: 'test run',
+				code: document.getElementById("test").innerHTML/*,
+				commandDidComplete: function(payload) {},
+				workflowDidComplete: function(payload) {},
+				checkpointWasReached: function(payload) {},
+				assertionDidComplete: function(payload) {}*/
+			}).go();
+		</script>
+  	</body>
+</html>

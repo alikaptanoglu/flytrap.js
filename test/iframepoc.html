@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  	<head>
+	    <script src="../lib/require.js"></script>
+  	</head>
+  	<body>
+  		<script id="test" type="text/template">
+	  		flytrap 'test'
+	  		antidependency 'div.blockUI'
+
+	  		set '#inUsername' to 'joel@six88.com'
+
+  		</script>
+	  	<iframe id="portal" width="1400px" height="600px" src="file:///Users/jroot/Dev/flytrap/test/test.html">
+    	</iframe>
+    	<script>
+			require.config({
+				baseUrl: "../",
+				paths: {
+				    "lib": "lib/",
+				    "core": "core/",
+				    "jquery": "lib/jquery",
+				    "test/fixturecontainer": "test/v2/fixturecontainer",
+				    "test": "test/v2/jsx/build"
+				},
+				waitSeconds: 15
+			});
+			
+		  	require([
+			  		"jquery", 
+			  		"core/flytrap"
+		  		],
+			    function($, Flytrap) {
+/*
+			    	$.ajax({
+						url: 'https://portal-test.shipcompliant.com',
+						success: function(data) {
+							debugger;
+						},
+						crossDomain: true,
+    					dataType: 'text/html',
+    					error: function(data) {
+    						debugger;
+    					}
+					});*/
+			    	new Flytrap({
+						
+						name: 'test run',
+						
+						code: $('#test').html()
+					}).go();
+		    	}
+		    );
+
+		  	this.documentToTraverse = null;
+		    function childDidLoad(_document) {
+		    	debugger;
+		    	this.documentToTraverse = _document;
+		    }
+		</script>
+  	</body>
+</html>

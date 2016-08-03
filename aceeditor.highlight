@@ -1,0 +1,54 @@
+define(function(require, exports, module) {
+	"use strict";
+
+	var oop = require("../lib/oop");
+	var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
+
+	var FlytrapHighlightRules = function() {
+
+		this.$rules = {
+			"start" : [
+				{
+					token : "comment",
+					start : /\/\*/,
+					end   : /\*\//
+				},
+				{
+					token : "comment",
+					regex : /^\s*\/\/.*$/
+				}, 
+				{ 
+					token : "statement-delimiter-left", 
+					regex : /\(/
+				},
+				{
+					token : "statement-delimiter-right",
+					regex : /\)/ 
+				},
+				{
+					token : "constant.numeric",    
+					regex : /[0-9]?[\.]?[0-9]+/
+				},
+				{
+					token : "keyword",
+					regex : /flytrap|antidependency|dependency|perform|click|check|hash|after|seconds|second|if|exists|begin|end|else|value|focus|goto|log|set|to|skip|after|attempts|attempt|repeat|times|time|for|each|in|checkpoint|assert|execute|with|as/
+				}, 
+				{
+					token : "string",
+					regex : /\'(?:[^\']+|\'\'|[\w]*)+\'/
+				}
+			]
+		};
+
+		this.normalizeRules();
+	};
+
+	FlytrapHighlightRules.metaData = {
+		fileTypes: ['fly'],
+		name: 'Flytrap'
+	};
+
+	oop.inherits(FlytrapHighlightRules, TextHighlightRules);
+	exports.FlytrapHighlightRules = FlytrapHighlightRules;
+});
+

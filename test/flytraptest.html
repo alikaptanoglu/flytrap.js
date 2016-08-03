@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Flytrap Test</title>
+	</head>
+	<body>
+		<!-- test markup -->
+		<input type="button" id="clickTest" onclick="console.log('successfully clicked')" value="Click Test" title="Click Test" />
+		<input type="checkbox" id="checkTest" onchange="console.log('successfully checked/unchecked')"> Check me!
+		<input type="text" id="valueTest" onchange="console.log('successfully changed value')" />
+		<div id="dependencyTest" style="background-color:#00ff00;display:none;"></div>
+		<div id="loading" style="display:none;background-color:#ff0000;">loading...</div>
+		<input type="checkbox" id="uncheckTest" checked="checked" />
+
+		<!-- js testing -->
+		<script src="../lib/require.js"></script>
+		<script>
+			require.config({
+				baseUrl: "../",
+				paths: {
+				    "lib": "lib/",
+				    "core": "core/",
+				    "jquery" :"lib/jquery"
+				},
+				waitSeconds: 15
+			});
+			
+		  	require([
+			  		"jquery", 
+			  		"core/flytrap"
+		  		],
+			    function($, Flytrap) {
+
+					var parameterTest = "Success!";
+					function createElementsAsyncronously($div, parameter) {
+						setTimeout(function() { 
+							$div.show()
+								.append(
+									'<input type="text" id="focusTest" />' + 
+									'<input type="button" id="click2" onclick="console.log(\'new button successfully ' + 'clicked\')" value="' + parameter + '" title="' + parameter + '" />' +
+									'<div id="x"></div>'
+								); 
+						}, 1000);
+					}
+
+					function showAndHideLoadingAsyncronously(number, $x, $loading, i) {
+						$x.append(number + ' ');
+						if (i == 1) {
+							$loading.show();
+							setTimeout(function() {
+								$loading.hide();
+							}, 3000);
+						}
+					}
+
+					var ap = new Flytrap('test workflow')
+						.withAntidependency('#loading:visible');	// don't attempt to run commands while the #loading is up
+
+					// if command executes its then block
+					ap.if(['#clickTest'], function(clickTest) {
+						return clickTest.val() == 'this will be false' || true;
+					})
+					.then(function() {
+						ap.perform('Test the click, check, value, hash, run, and finally methods (.CHECK IS BROKEN)')
+							.click('#clickTest')
+							.check('#checkTest')
+							.value('#valueTest', 'I\'m setting a value.')
+							.hash('#hashTest')
+							.run([ '#dependencyTest', { _parameter_: parameterTest } ], function($div, parameter) {
+								createElementsAsyncronously($div, parameter);
+							})
+							.finally(function() { console.log('all right!'); });
+
+						ap.perform('Click test 2')
+							.click('#click2');
+					})
+					.else(function() {
+						ap.perform('else')
+							.log('inside the else!');
+					});
+
+					ap.perform('Click the new button #click2 and set a value and focus on the test input')
+						.value('#focusTest', 'I\'m focused!')
+						.focus('#focusTest')
+						.uncheck('#uncheckTest');
+
+					ap.perform('Count to 5 quickly, checking dependencies before the 1st iteration only')
+						.each([1, 2, 3, 4, 5], function(number, index) {
+							/*ap.if([], function() { 
+								return index % 2 == 0;
+							}).then(function() {
+								ap.perform('')
+									.log('the index is even');
+							}).else(function() {
+								ap.perform('')
+									.log('the index is odd');
+							});*/
+							ap.perform('each test')
+								.run([{_parameter_:number}, {_parameter_:index}, '#x', '#loading'], function(number, i, $x, $loading) {
+									showAndHideLoadingAsyncronously(number, $x, $loading, i);
+								});
+						})
+						.executionCount(2);
+
+					// if command executes its else block
+					ap.if(['#clickTest', {_parameter_:'this will be true'}], function($clickTest, isThisTrue) {
+						return isThisTrue == 'actually it will be false';
+					}).then(function() {
+						ap.perform('in the then')
+							.log('hello from inside the then block');
+					}).else(function() {
+
+						// nested if command its then block
+						ap.if(function() {
+							return true;
+						}).then(function() {
+							ap.perform('inception block')
+								.log('inside inception!');
+						});
+
+						ap.perform('last else command')
+							.log('inside last else');
+					});
+
+					// if command won't execute anything
+					ap.if(['#clickTest'], function(clickTest) {
+						return clickTest.val() == 'this will NOT execute!';
+					}).then(function() {
+						ap.perform('if you see this in console, things are going wrong')
+							.run([], function() { throw 'i will not be thrown'; });
+					});
+
+					ap.go();
+		    	}
+		    );
+		</script>
+	</body>
+</html>

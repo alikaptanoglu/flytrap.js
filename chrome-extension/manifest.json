@@ -1,0 +1,39 @@
+{
+  "manifest_version": 2,
+  "name": "TestBeacon",
+  "description": "Run FlytrapJs (http://docs.flytrap.io) scripts on any website.",
+  "version": "1.0.3",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": [ "eventpage.js" ],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [ 
+        "*://*/*"
+      ],
+      "js": [ 
+        "main.js",
+        "lib/require.js",
+        "lib/sizzle.js",
+        "lib/output.min.js",
+        "core/persister.js",
+        "testWorkflow.js",
+        "bootstrapper.js"
+      ]
+    }
+  ],
+  "permissions": [
+     "tabs", 
+     "background",
+     "storage"
+  ],
+  "icons": {
+    "16": "img/icon_16.png",
+    "48": "img/icon_48.png",
+    "128": "img/icon_128.png"
+  }
+}
